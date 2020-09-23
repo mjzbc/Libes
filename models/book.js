@@ -37,7 +37,7 @@ const bookSchema = new mongoose.Schema({
 });
 
 // create virtual property, derives value on model above
-bookSchema.virtual('coverImagerPath').get(function() {
+bookSchema.virtual('coverImagePath').get(function() {
     //use 'function' keyword, not arrow function, need access to 'this' keyword for the book
     if (this.coverImageName != null) {
         return path.join('/', coverImageBasePath, this.coverImageName)

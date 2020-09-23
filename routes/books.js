@@ -64,10 +64,11 @@ router.post('/', upload.single('cover'), async (req, res) => {
         //res.redirect(`books/${newBook.id}`);
         res.redirect('/books');
 
-    } catch {
+    } catch(e) {
         if (book.coverImageName != null) {
             removeBookCover(book.coverImageName)
         }
+        console.log(e)
         renderNewPage(res, book, true);
     }
 
