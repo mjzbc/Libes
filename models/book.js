@@ -1,8 +1,4 @@
 const mongoose = require('mongoose');
-const path = require('path');
-
-// create var for multer multipart form-data
-const coverImageBasePath = 'uploads/bookCovers';
 
 const bookSchema = new mongoose.Schema({
     title: {
@@ -25,9 +21,13 @@ const bookSchema = new mongoose.Schema({
         required: true,
         default: Date.now
     },
-    coverImageName: {
-        type: String,
+    coverImage: {
+        type: Buffer,
         required: true,
+    },
+    coverImageType: {
+        type: String,
+        required: true
     },
     author: {
         type: mongoose.Schema.Types.ObjectId,
@@ -39,10 +39,9 @@ const bookSchema = new mongoose.Schema({
 // create virtual property, derives value on model above
 bookSchema.virtual('coverImagePath').get(function() {
     //use 'function' keyword, not arrow function, need access to 'this' keyword for the book
-    if (this.coverImageName != null) {
-        return path.join('/', coverImageBasePath, this.coverImageName)
+    if (this.coverImage != null && this.coverImageType != null) {
+        return `data:${this.coverImageType};charset=utf-8;base64,${this.coverImage.toString('base64')}`
     }
 })
 
 module.exports = mongoose.model('Book', bookSchema);
-module.exports.coverImageBasePath = coverImageBasePath;
