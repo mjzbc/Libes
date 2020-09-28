@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
     <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet">
-    <link rel="stylesheet" href="/stylesheets/main.css">
+    <link id="main-css" rel="stylesheet" href="/stylesheets/main.css">
 
-    <title>MyLibes</title>
+    <title>Libes</title>
 </head>
 <body>
     
@@ -25,16 +25,33 @@
     <script src="https://unpkg.com/filepond-plugin-image-resize/dist/filepond-plugin-image-resize.js"></script>
     <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
     <script>
-        FilePond.registerPlugin(FilePondPluginImagePreview);
-        FilePond.registerPlugin(FilePondPluginImageResize);
-        FilePond.registerPlugin(FilePondPluginFileEncode);
-        const inputElement = document.querySelector('input[type="file"]');
-        const pond = FilePond.create(inputElement);
-        FilePond.setOptions({
-            stylePanelAspectRatio: '150:100',
-            imageResizeTargetWidth: 100,
-            imageReseizeTargetHeight: 150,
-        });
-        FilePond.parse(document.body);</script>
+        const rootStyles = window.getComputedStyle(document.documentElement);
+
+        if (rootStyles.getPropertyValue('--book-cover-width-large') != null && rootStyles.getPropertyValue('--book-cover-width-large') != '') {
+            ready();
+        } else {
+            document.getElementById('main-css').addEventListener('load', ready);
+        }
+
+        function ready() {
+            const coverWidth = parseFloat(rootStyles.getPropertyValue('--book-cover-width-large'));
+            const coverAspectRatio = parseFloat(rootStyles.getPropertyValue('--book-cover-aspect-ratio'));
+            const coverHeight = coverWidth / coverAspectRatio
+
+            FilePond.registerPlugin(FilePondPluginImagePreview);
+            FilePond.registerPlugin(FilePondPluginImageResize);
+            FilePond.registerPlugin(FilePondPluginFileEncode);
+            const inputElement = document.querySelector('input[type="file"]');
+            const pond = FilePond.create(inputElement);
+            FilePond.setOptions({
+                stylePanelAspectRatio: 1 / coverAspectRatio,
+                imageResizeTargetWidth: coverWidth,
+                imageReseizeTargetHeight: coverHeight,
+            });
+            FilePond.parse(document.body);
+        }
+    </script>
+
+
 </body>
 </html>
